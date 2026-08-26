@@ -1,7 +1,7 @@
 import User from "../../models/User.js";
 import bcrypt from "bcryptjs";
 import { ApiError } from "../../utils/ApiError.js";
-import { generateAccessToken } from "../../utils/jwt.js";
+import { generateAccessToken, generateRefreshToken } from "../../utils/jwt.js";
 
 
 export class AuthService {
@@ -52,6 +52,7 @@ export class AuthService {
 
         // 5. Generate JWT
         const accessToken = generateAccessToken(user);
+        const refreshToken = generateRefreshToken(user);
 
         // 6. Return authentication response payload
         const userJson = user.toJSON();
@@ -59,6 +60,7 @@ export class AuthService {
         return {
             user: userJson,
             accessToken,
+            refreshToken,
         };
     }
 }
