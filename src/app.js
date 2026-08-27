@@ -5,6 +5,7 @@ import morgan from 'morgan';
 
 import healthRoutes from './routes/health.routes.js';
 import authRoutes from './routes/auth.route.js';
+import userRoute from './routes/user.routes.js'
 import { ApiResponse } from './utils/ApiResponse.js';
 import { errorHandler } from './middleware/error.middleware.js';
 
@@ -19,6 +20,7 @@ app.use(morgan('dev'));
 
 app.use('/api/v1', healthRoutes);
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/users', userRoute);
 
 
 app.use((req, res) =>{
