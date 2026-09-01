@@ -11,3 +11,14 @@ export const createProject = asyncErrorHandler(async (req, res) => {
         201);
 
 });
+
+
+export const getProject = asyncErrorHandler(async (req, res) => {
+    const result = await ProjectService.getProject(req.query, req.user);
+    return ApiResponse.success(
+        res,
+        'Projects fetched successfully',
+        result,
+        200
+    );
+})
