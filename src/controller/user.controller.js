@@ -12,4 +12,15 @@ export const createUser = asyncErrorHandler(async (req, res) => {
             201
         );
 
-})
+});
+
+
+export const getUser = asyncErrorHandler(async (req, res) => {
+    const result = await Userservice.getUser(req.query);
+    return ApiResponse.success(
+        res,
+        'Users fetched successfully',
+        result,
+        200
+    );
+});;
