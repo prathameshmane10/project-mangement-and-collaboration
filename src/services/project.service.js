@@ -21,4 +21,13 @@ export class ProjectService {
 
         return await project.populate('owner', 'firstName lastName email role');
     }
+
+
+    static async getProject(queryParams, currentUser) {
+        const { page = 1, limit = 10, search, status, sort='-createdAt' } = queryParams;
+
+        const pageNum = parseInt(page, 10) || 1;
+        const limitNum = parseInt(limit, 10) || 10;
+        const skip = (pageNum - 1) * limitNum;
+    }
 }
