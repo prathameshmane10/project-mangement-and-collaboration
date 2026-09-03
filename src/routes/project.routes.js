@@ -4,6 +4,8 @@ import { authorize } from "../middleware/authorize.middlware.js";
 import { validateProject } from '../middleware/validators/project.validator.js';
 import { createProject } from '../controller/project.controller.js'
 import { getProject } from '../controller/project.controller.js'
+import { getProjectById } from '../controller/project.controller.js'
+import { updateProject } from '../controller/project.controller.js'
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ROLES } from "../models/User.js";
 
@@ -24,6 +26,12 @@ router.post('/create',
     authorize(ROLES.ADMIN, ROLES.MANAGER), 
     validateProject, 
     createProject);
+
+router.get('/findOne/:id', getProjectById);
+
+// http://localhost:5000/api/v1/projects/update/66cb0123a1b2c3d4e5f67890
+router.patch('/update/:id', updateProject);
+
 
 router.delete('/:id', authorize(ROLES.SUPER_ADMIN), (req, res) => {
     return ApiResponse.success(res, 'Project deleted successfully');

@@ -1,5 +1,6 @@
 // import Project from "../../models/Project.js";
 import Project from '../models/Project.js'
+import mongoose from "mongoose";
 
 export class ProjectService {
     static async createProject(projectData, ownerId) {
@@ -75,5 +76,76 @@ export class ProjectService {
                 hasPrevPage: pageNum > 1,
             },
         };
-        }
     }
+
+    static async getProjectById(projectId, currentUser) {
+        if (!mongoose.Types.ObjectId.isValid(projectId)) {
+            throw new ApiError(400, 'Invalid project ID');
+        }
+
+        const project = await Project.findById(projectId)
+            .populate('owner', 'firstName lastName email role')
+            .populate('members', 'firstName lastName email role');
+
+        if (!project) {
+            throw new ApiError(404, 'Project not found');
+        }
+
+        if (currentUser.role === 'MEMBER') {
+            const isOwner = project.owner._id.toString() === currentUser._id.toString();
+            const isMember = project.members.some(
+                (m) => m._id.toString() === currentUser._id.toString()
+            );
+
+            if (!isOwner && !isMember) {
+                throw new ApiError(403, 'You do not have permission to access this project');
+            }
+        }
+
+
+
+        return project;
+    }
+
+    static async updateProject(projectId, updateData, currentUser) {
+        if (!mongoose.Types.ObjectId.isValid(projectId)) {
+            throw new ApiError(400, 'Invalid Project ID format');
+        }
+
+        const project = await Project.findById(projectId);
+
+        if (!project) {
+            throw new ApiError(404, 'Project not found');
+        }
+
+        const isOwner = project.owner.toString() === currentUser._id.toString();
+        const isAdminOrManager = ['ADMIN', 'MANAGER'].includes(currentUser.role);
+
+        if (!isOwner && !isAdminOrManager) {
+            throw new ApiError(403, 'You do not have permission to update this project');
+        }
+
+        const allowedUpdates = [
+            'name',
+            'description',
+            'status',
+            'members',
+            'startDate',
+            'endDate'
+        ];
+
+        allowedUpdates.forEach((field) => {
+            if (updateData[field] !== undefined) {
+                project[field] = updateData[field];
+            }
+        });
+
+        await project.save();
+
+        return await project.populate([
+            { path: 'owner', select: 'firstName lastName email role' },
+            { path: 'members', select: 'firstName lastName email role' },
+        ]);
+
+    }
+}

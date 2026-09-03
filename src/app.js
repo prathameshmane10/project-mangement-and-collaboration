@@ -7,6 +7,7 @@ import healthRoutes from './routes/health.routes.js';
 import authRoutes from './routes/auth.route.js';
 import userRoute from './routes/user.routes.js'
 import projectRoutes from './routes/project.routes.js';
+import taskRoutes from './routes/task.route.js';
 import { ApiResponse } from './utils/ApiResponse.js';
 import { errorHandler } from './middleware/error.middleware.js';
 
@@ -23,7 +24,7 @@ app.use('/api/v1', healthRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoute);
 app.use('/api/v1/projects', projectRoutes);
-
+app.use('/api/v1/tasks', taskRoutes);
 
 app.use((req, res) =>{
     return ApiResponse.error(res, 'Route Not Found', [], 404)
